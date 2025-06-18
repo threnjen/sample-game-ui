@@ -11,8 +11,8 @@ class UI(GameUI):
         asyncio.create_task(self.background_poll_loop())
         print("UI is running")
 
-    def send_action_to_server(self, actions):
-        return self.runner_client.send_action_to_server(actions)
+    def send_action_to_server(self, payload):
+        return self.runner_client.send_action_to_server(payload)
 
     async def wait_for_server_response(self):
         return await self.queue.get()
