@@ -3,10 +3,17 @@ from game_contracts.game_ui import GameUI
 
 
 class ScenarioUI(GameUI):
-    def __init__(self, player_id, game_state, runner_client):
+    def __init__(self, player_id, game_id, runner_client):
         self.runner_client = runner_client
         self.queue = asyncio.Queue()
         self.client_id = None
+        self.game_state = {}
+        self.player_id = player_id
+        self.game_id = game_id
+
+    def initialize_server(self, game_id):
+        self.game_state = self.runner_client.initialize_server(game_id)
+        print(f"Game state initialized")
 
     async def start(self):
         asyncio.create_task(self.background_poll_loop())

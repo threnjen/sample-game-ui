@@ -27,7 +27,7 @@ def get_runner(location: str) -> RunnerClientABC:
         return CloudRunnerClient()
 
 
-def get_client_game_state(player_id: str, runner: RunnerClientABC) -> dict:
+def get_client_game_id(player_id: str, runner: RunnerClientABC) -> dict:
     new_game = input("Start a new game? (y/n): ").strip().lower() == "y"
     # pseudocode here to simulate a choice in what we are loading
 
@@ -37,14 +37,15 @@ def get_client_game_state(player_id: str, runner: RunnerClientABC) -> dict:
     if not new_game:
         available_games = runner.get_games_for_player(game_configs)
         if available_games:
-            print(f"Available games for player {player_id}: {available_games}")
+            print(f"Available game ids for player {player_id}: {available_games}")
             game_id = available_games[
                 0
             ]  # Just pick the first available game for simplicity
             print(f"Loading existing game: {game_id}")
-            return runner.load_existing_game(game_configs)
+            return game_id
         else:
             print("No existing games. Starting a new game.")
+            new_game = True
 
     return runner.setup_new_game(game_configs)
 
@@ -59,9 +60,11 @@ async def main():
 
     player_id = "player_id"
 
-    game_state = get_client_game_state(player_id, runner)
+    game_id = get_client_game_id(player_id, runner)
 
-    ui = ScenarioUI(player_id, game_state, runner)
+    ui = ScenarioUI(player_id, game_id, runner)
+
+    ui.initialize_server(game_id)
 
     await ui.start()
     # Example: wait for a message and print it
