@@ -1,5 +1,5 @@
 import asyncio
-from game_contracts.game_ui import GameUI
+from game_contracts.game_ui_abc import GameUI
 
 
 class ScenarioUI(GameUI):
@@ -30,21 +30,22 @@ class ScenarioUI(GameUI):
             msg = await self.runner_client.poll_for_server_response()
             await self.queue.put(msg)
 
-    def ui_side_cleanup(self):
+    def ui_side_cleanup(self) -> bool:
         print("Cleaning up UI resources.")
+        return True
 
-    def handle_message(self, incoming_message):
+    def handle_message(self, message):
 
-        if not self.client_id and incoming_message.get("client_id"):
-            self.client_id = incoming_message["client_id"]
+        if not self.client_id and message.get("client_id"):
+            self.client_id = message["client_id"]
             print(f"Assigned client ID: {self.client_id}")
-        if incoming_message.get("apply_action"):
-            print(f"Action applied: {incoming_message['apply_action']}")
-        if incoming_message.get("game_state"):
-            print(f"Game state updated: {incoming_message['game_state']}")
-        if incoming_message.get("error"):
-            print(f"Error: {incoming_message['error']}")
-        if incoming_message.get("game_over"):
+        if message.get("apply_action"):
+            print(f"Action applied: {message['apply_action']}")
+        if message.get("game_state"):
+            print(f"Game state updated: {message['game_state']}")
+        if message.get("error"):
+            print(f"Error: {message['error']}")
+        if message.get("game_over"):
             print("Game over, beginning game cleanup.")
             return self.ui_side_cleanup()
             # Optionally, you might want to exit or reset the game here

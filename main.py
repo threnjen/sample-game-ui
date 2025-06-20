@@ -42,12 +42,12 @@ def get_client_game_id(player_id: str, runner: RunnerClientABC) -> dict:
                 0
             ]  # Just pick the first available game for simplicity
             print(f"Loading existing game: {game_id}")
-            return game_id
+            return {"game_id": game_id}
         else:
             print("No existing games. Starting a new game.")
             new_game = True
 
-    return runner.setup_new_game(game_configs)
+    return runner.setup_new_game(game_configs).get("game_id")
 
 
 async def main():
