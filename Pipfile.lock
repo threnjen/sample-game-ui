@@ -163,7 +163,7 @@
         "game-contracts": {
             "file": "../game-contracts/dist/game_contracts-0.1.0.tar.gz",
             "hashes": [
-                "sha256:a0d7743cfc0506eb91f7a9d5d17b611b3f04d00368422d60d09d3d09e497e710"
+                "sha256:8fe557625e0e7eeab9beb8f2f8f7e137614e64289d8170ab56b0697537eaf5d2"
             ]
         },
         "game-runners": {

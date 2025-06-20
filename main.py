@@ -40,7 +40,7 @@ def get_client_game_id(player_id: str, runner: RunnerClientABC) -> dict:
             print(
                 f"Available game ids for player with details {player_id}: {available_games}"
             )
-            game_ids = available_games.keys()
+            game_ids = list(available_games.keys())
             game_id = game_ids[0]  # Just pick the first available game for simplicity
             print(f"Loading existing game: {game_id}")
             return {"game_id": game_id}
