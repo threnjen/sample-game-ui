@@ -4,38 +4,21 @@ from game_contracts.game_ui_abc import GameUI
 
 class ScenarioUI(GameUI):
     def __init__(self, player_id, game_id, runner_client):
+        super().__init__(
+            player_id=player_id,
+            game_id=game_id,
+            game_name="sample_game",
+            runner_client=runner_client,
+        )
         self.runner_client = runner_client
-        self.queue = asyncio.Queue()
         self.client_id = None
         self.game_state = {}
-        self.player_id = player_id
-        self.game_id = game_id
 
-    def initialize_server(self, game_id):
-        self.game_state = self.runner_client.initialize_server(game_id)
-        print(f"Game state initialized")
-
-    async def start(self):
-        asyncio.create_task(self.background_poll_loop())
-        print("UI is running")
-
-    def send_action_to_server(self, payload):
-        return self.runner_client.send_action_to_server(payload)
-
-    async def wait_for_server_response(self):
-        return await self.queue.get()
-
-    async def background_poll_loop(self):
-        while True:
-            msg = await self.runner_client.poll_for_server_response()
-            await self.queue.put(msg)
-
-    def ui_side_cleanup(self) -> bool:
+    def ui_game_cleanup(self) -> bool:
         print("Cleaning up UI resources.")
         return True
 
-    def handle_message(self, message):
-
+    def handle_server_message(self, message):
         if not self.client_id and message.get("client_id"):
             self.client_id = message["client_id"]
             print(f"Assigned client ID: {self.client_id}")
@@ -47,6 +30,6 @@ class ScenarioUI(GameUI):
             print(f"Error: {message['error']}")
         if message.get("game_over"):
             print("Game over, beginning game cleanup.")
-            return self.ui_side_cleanup()
+            return self.ui_game_cleanup()
             # Optionally, you might want to exit or reset the game here
         return True
