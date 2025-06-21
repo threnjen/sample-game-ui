@@ -1,4 +1,5 @@
 import asyncio
+
 from game_contracts.game_ui_abc import GameUI
 
 
@@ -10,15 +11,24 @@ class ScenarioUI(GameUI):
             game_name="sample_game",
             runner_client=runner_client,
         )
-        self.runner_client = runner_client
-        self.client_id = None
+        self._initialize_server()
         self.game_state = {}
 
-    def ui_game_cleanup(self) -> bool:
+    def _ui_game_cleanup(self) -> bool:
+        """Clean up UI resources.
+        This method is called when the game is over or when the UI needs to be reset."""
         print("Cleaning up UI resources.")
         return True
 
-    def handle_server_message(self, message):
+    def handle_server_message(self, message: dict) -> bool:
+        """Handle messages received from the server.
+        This method processes the message and updates the UI or game state accordingly.
+
+        The boolean that it returns indicates whether the game should continue running.
+        Args:
+            message (dict): The message received from the server, which may contain
+                            client_id, apply_action, game_state, error, or game_over keys.
+        """
         if not self.client_id and message.get("client_id"):
             self.client_id = message["client_id"]
             print(f"Assigned client ID: {self.client_id}")
@@ -30,6 +40,5 @@ class ScenarioUI(GameUI):
             print(f"Error: {message['error']}")
         if message.get("game_over"):
             print("Game over, beginning game cleanup.")
-            return self.ui_game_cleanup()
-            # Optionally, you might want to exit or reset the game here
+            return self._ui_game_cleanup()
         return True

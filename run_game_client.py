@@ -1,7 +1,9 @@
-from src.ui import ScenarioUI
-from game_contracts.runner_client_abc import RunnerClientABC
 import argparse
 import asyncio
+
+from game_contracts.runner_client_abc import RunnerClientABC
+
+from src.ui import ScenarioUI
 
 
 def parse_args():
@@ -59,17 +61,18 @@ async def main():
     runner = get_runner(game_location)
     print(f"Using runner: {runner.__class__.__name__}")
 
-    player_id = "player_1"  # This could be dynamically set or passed as an argument
+    player_id = (
+        "1234567890"  # This could be dynamically/randomly set or passed as an argument
+    )
 
     game_id = get_client_game_id(player_id, runner).get("game_id")
     print(f"Game ID: {game_id}")
 
     ui = ScenarioUI(player_id, game_id, runner)
 
-    ui.initialize_server()
+    await ui.start()  # Initialize the UI and connect to the server
+    print("UI initialized and connected to the server.")
 
-    await ui.start()
-    # Example: wait for a message and print it
     while True:
 
         msg = await ui.wait_for_server_response()
@@ -86,9 +89,6 @@ async def main():
 
         new_message_for_server = {"player 1": player_selection}
         ui.send_action_to_server(new_message_for_server)
-
-    print("Beginning UI side cleanup.")
-    ui.ui_game_cleanup()
 
 
 if __name__ == "__main__":
