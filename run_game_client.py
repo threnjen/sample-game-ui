@@ -20,11 +20,11 @@ def parse_args():
 
 def get_runner(location: str) -> RunnerClientABC:
     if location == "local":
-        from runners.local.runner_client import LocalRunnerClient
+        from runners.local.client_runner import LocalRunnerClient
 
         return LocalRunnerClient()
     else:
-        from runners.cloud.runner_client import CloudRunnerClient
+        from runners.cloud.client_runner import CloudRunnerClient
 
         return CloudRunnerClient()
 
